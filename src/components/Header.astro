@@ -1,0 +1,32 @@
+---
+const pathname = Astro.url.pathname;
+const nav = [
+  ['About','/about/'],
+  ['Research','/research/'],
+  ['Publications','/publications/'],
+  ['Projects','/projects/'],
+  ['Posts','/posts/'],
+  ['Awards','/awards/']
+];
+---
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/">Shubham <span>Gade</span></a>
+    <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>☰</button>
+    <nav class="nav-links" id="primary-navigation" aria-label="Primary navigation" data-menu>
+      {nav.map(([label,href]) => <a href={href} aria-current={pathname === href ? 'page' : undefined}>{label}</a>)}
+      <a class="nav-cta" href="/files/Shubham_Gade_Academic_CV.pdf" target="_blank" rel="noopener noreferrer">CV ↗</a>
+    </nav>
+  </div>
+</header>
+<script is:inline>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const menu = document.querySelector('[data-menu]');
+  const closeMenu = () => { menu?.classList.remove('open'); toggle?.setAttribute('aria-expanded', 'false'); };
+  toggle?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  });
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeMenu(); });
+</script>

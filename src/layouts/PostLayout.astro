@@ -1,0 +1,14 @@
+---
+import BaseLayout from './BaseLayout.astro';
+const { frontmatter } = Astro.props;
+---
+<BaseLayout title={`${frontmatter.title} | Shubham Gade`} description={frontmatter.description || frontmatter.title} image={frontmatter.image || '/images/homepage-portrait.webp'}>
+  <article class="container section prose">
+    <div class="eyebrow">{frontmatter.category || 'Research Note'} · {frontmatter.date}</div>
+    <h1 style="font-size:clamp(2.8rem,6vw,5.3rem)">{frontmatter.title}</h1>
+    {frontmatter.description && <p class="lead" style="margin-top:24px">{frontmatter.description}</p>}
+    <div style="margin-top:28px;color:var(--muted);font-size:.9rem">Shubham Gade · Agricultural Engineer · Precision Agriculture Researcher</div>
+    {frontmatter.image && <img src={frontmatter.image} alt="" style="margin-top:42px;border-radius:24px;max-height:650px;width:100%;object-fit:cover" />}
+    <div style="margin-top:48px"><slot /></div>
+  </article>
+</BaseLayout>

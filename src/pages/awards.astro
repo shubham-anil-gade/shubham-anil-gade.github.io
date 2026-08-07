@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const awards=[
+  {year:"2026",title:"1st Prize \u00b7 Oral Presentation",where:"4th Roorkee Water Conclave \u00b7 Indian Institute of Technology Roorkee",url:"https://ait.ac.th/2026/03/ait-phd-student-wins-first-prize-at-4th-roorkee-water-conclave-2026-at-the-indian-institute-of-technology-roorkee-india/"},
+  {year:"2025",title:"Best Presentation Award",where:"Hohai University International Summer Program \u00b7 Nanjing, China",url:"https://ait.ac.th/2025/08/ait-students-explore-water-disaster-prevention-and-cultural-exchange-at-hohai-university-china/"},
+  {year:"2025",title:"2nd Prize \u00b7 AIT Decarbonization Nexus",where:"Inter-University SDG Research Fair \u00b7 Asian Institute of Technology",url:"https://ait.ac.th/sustainability-initiatives/"},
+  {year:"2024",title:"3rd Prize \u00b7 Poster Competition",where:"International Workshop on Regenerative Agriculture \u00b7 AIT",url:"https://ait.ac.th/2024/12/workshop-equips-farming-communities-with-regenerative-agriculture-tools-for-sustainable-rice-production/"},
+  {year:"2024",title:"2nd Prize \u00b7 SDGs Research Competition",where:"Sustainability Research Trends Workshop \u00b7 Asian Institute of Technology",url:"https://ait.ac.th/2024/11/sustainability-in-action-research-trends-workshop-and-sdg-competition-propel-innovation-and-collaboration-at-ait/"},
+  {year:"2023",title:"2nd Prize \u00b7 Sustainability Expo / AIT SDG Research Fair",where:"Asian Institute of Technology",url:null},
+  {year:"2023",title:"Best Young Professional Staff Award",where:"ICAR\u2013National Institute of Abiotic Stress Management",url:null},
+];
+---
+<BaseLayout title="Awards & Recognition | Shubham Gade" description="Awards and recognition received by Shubham Gade across research, innovation and scientific communication.">
+  <section class="page-hero"><div class="container"><div class="eyebrow">Awards & Recognition</div><h1>Recognition across research, innovation and communication.</h1><p class="lead">Competitive awards received across academic research, sustainability and scientific presentation. Awards link to official institutional announcements when a specific public announcement could be verified.</p></div></section>
+  <section class="section compact"><div class="container"><div class="awards awards-full awards-hover">{awards.map(a => a.url ? <a class="award-row award-link" href={a.url} target="_blank" rel="noopener noreferrer"><div class="year">{a.year}</div><strong>{a.title} ↗</strong><div class="where">{a.where}</div></a> : <div class="award-row"><div class="year">{a.year}</div><strong>{a.title}</strong><div class="where">{a.where}</div></div>)}</div><p class="verification-note">The 2023 Sustainability Expo and ICAR-NIASM Best Young Professional Staff Award are retained from my academic CV; a specific public award announcement was not located during the pre-launch link audit, so these entries are intentionally not linked.</p></div></section>
+</BaseLayout>

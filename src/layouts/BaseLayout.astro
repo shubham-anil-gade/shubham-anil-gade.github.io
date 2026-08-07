@@ -1,0 +1,15 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+const { title = 'Shubham Gade | Agricultural Engineer & Precision Agriculture Researcher', description = 'PhD Researcher at the Asian Institute of Technology working in precision irrigation, remote sensing, crop phenotyping, geospatial analytics and digital agriculture.', image = '/images/homepage-portrait.webp' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
+const structuredData = {
+  '@context':'https://schema.org','@type':'Person',name:'Shubham Anil Gade',alternateName:'Shubham Gade',jobTitle:'PhD Researcher',email:'mailto:Shubham.Gade@ait.ac.th',
+  affiliation:{'@type':'CollegeOrUniversity',name:'Asian Institute of Technology',url:'https://ait.ac.th/'},
+  url:'https://shubham-anil-gade.github.io',
+  sameAs:['https://orcid.org/0000-0003-1671-8394','https://scholar.google.com/citations?user=HjwHs4sAAAAJ&hl=en','https://www.scopus.com/authid/detail.uri?authorId=57226315750','https://www.researchgate.net/profile/Shubham-Gade-2/research','https://www.linkedin.com/in/shubham-gade-66807215a','https://github.com/shubham-anil-gade'],
+  knowsAbout:['Precision Agriculture','Precision Irrigation','Remote Sensing','Crop Phenotyping','Digital Agriculture','Geospatial Analytics','Machine Learning']
+};
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>{title}</title><meta name="description" content={description}/><meta name="author" content="Shubham Anil Gade"/><link rel="canonical" href={canonical}/><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><link rel="alternate" type="application/rss+xml" title="Shubham Gade — Posts" href="/rss.xml"/><meta name="theme-color" content="#0f4b3f"/><meta property="og:type" content="website"/><meta property="og:locale" content="en_US"/><meta property="og:title" content={title}/><meta property="og:description" content={description}/><meta property="og:image" content={new URL(image, Astro.site || Astro.url.origin)}/><meta property="og:image:alt" content="Shubham Gade — Agricultural Engineer and Precision Agriculture Researcher"/><meta property="og:url" content={canonical}/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content={title}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={new URL(image, Astro.site || Astro.url.origin)}/><script type="application/ld+json" set:html={JSON.stringify(structuredData)}/></head><body><a class="skip-link" href="#main-content">Skip to main content</a><Header/><main id="main-content"><slot/></main><Footer/></body></html>
