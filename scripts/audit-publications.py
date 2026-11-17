@@ -24,7 +24,7 @@ def existing():
     records = []
     for item in manual["publications"] + manual["preprints"] + synced:
         url = item["url"]
-        records.append({"title": item["title"], "doi": doi_key(url) if re.match(r"https?://(?:dx\\.)?doi\\.org/", url, re.I) else ""})
+        records.append({"title": item["title"], "doi": doi_key(url) if re.match(r"https?://(?:dx\.)?doi\.org/", url, re.I) else ""})
     if not records:
         raise RuntimeError("No existing publication records recognized; aborting.")
     return records
