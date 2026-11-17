@@ -1,0 +1,105 @@
+name: Synchronize Publications
+
+on:
+  schedule:
+    - cron: '27 2 * * 1'
+  workflow_dispatch:
+    inputs:
+      reviewed_dois:
+        description: 'Optional verified DOI(s), comma-separated, from Google Scholar or publisher'
+        required: false
+        type: string
+      apply:
+        description: 'Publish eligible additions (uncheck for preview only)'
+        type: boolean
+        default: true
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/data/**'
+      - 'src/pages/publications.astro'
+      - 'scripts/**'
+      - '.github/workflows/publication-sync.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publication-sync
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Unit tests
+        run: python -m unittest discover -s scripts -p 'test_*.py'
+      - name: Preview publication updates
+        env:
+          REVIEWED_DOIS: ${{ inputs.reviewed_dois }}
+        run: python scripts/sync-publications.py --reviewed-dois "$REVIEWED_DOIS"
+      - name: Save preview report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-sync-report
+          path: publication-sync-report.json
+          if-no-files-found: warn
+      - run: npm install
+      - run: npm run build
+
+  publish:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.apply))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Apply validated additions
+        env:
+          REVIEWED_DOIS: ${{ inputs.reviewed_dois }}
+        run: |
+          python -m unittest discover -s scripts -p 'test_*.py'
+          python scripts/sync-publications.py --apply --reviewed-dois "$REVIEWED_DOIS"
+      - name: Save publication report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-apply-report
+          path: publication-sync-report.json
+          if-no-files-found: warn
+      - name: Build and publish only changed data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- src/data/synced-publications.json; then
+            echo "No new eligible publications; nothing to deploy."
+            exit 0
+          fi
+          npm install
+          npm run build
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/synced-publications.json
+          git commit -m "Synchronize verified publications"
+          git push origin HEAD:main
+          gh workflow run deploy.yml --ref main
