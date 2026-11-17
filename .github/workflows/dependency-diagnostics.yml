@@ -1,0 +1,84 @@
+name: Dependency security diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/dependency-diagnostics.yml'
+      - '.github/workflows/deploy.yml'
+      - '.github/workflows/publication-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Record runtime and resolve existing dependencies
+        run: |
+          node --version
+          npm --version
+          test -f package-lock.json
+      - name: Record detailed npm advisories
+        run: |
+          status=0
+          npm audit --json > npm-audit.json || status=$?
+          export AUDIT_STATUS="$status"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path("npm-audit.json").read_text())
+          if "error" in data or "vulnerabilities" not in data:
+              raise SystemExit("Audit retrieval failed: " + str(data.get("error", data)))
+          print("npm audit exit status:", os.environ["AUDIT_STATUS"])
+          print("Audit totals:", json.dumps(data.get("metadata", {})))
+          for name, item in data["vulnerabilities"].items():
+              print("PACKAGE:", name, "severity:", item["severity"], "direct:", item["isDirect"], "range:", item["range"], "fix:", json.dumps(item.get("fixAvailable")))
+              for via in item.get("via", []):
+                  if isinstance(via, dict):
+                      print("ADVISORY:", via.get("title"), via.get("url"), "range:", via.get("range"))
+                  else:
+                      print("TRANSITIVE:", via)
+          PY
+      - name: Test clean installation and build on Node 24
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          test -f dist/index.html
+          test -f dist/publications/index.html
+      - name: Confirm expected site features in generated output
+        run: |
+          grep -q 'cloudflareinsights.com/beacon.min.js' dist/index.html
+          grep -q '10.1007/978-981-95-9338-5_8' dist/publications/index.html
+          grep -q '10.1007/s41685-026-00441-w' dist/publications/index.html
+          test -f dist/sitemap.xml
+          test -f dist/robots.txt
+          test -f dist/favicon.ico
+      - name: Test publication synchronization safeguards
+        run: python -m unittest discover -s scripts -p 'test_*.py'
+      - name: Enforce security threshold
+        run: npm audit --audit-level=high
+      - name: Retain diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dependency-diagnostics
+          path: |
+            npm-audit.json
+            package-lock.json
+          if-no-files-found: warn
