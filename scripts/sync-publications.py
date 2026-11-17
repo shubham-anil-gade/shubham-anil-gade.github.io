@@ -83,7 +83,7 @@ def candidate(work, doi, sources, existing, reviewed=False):
     authors = work.get("author") or []
     if not title or not authors or any(not format_author(a) for a in authors):
         return None, "incomplete title or authors"
-    if not any(named_author(a) and (same_orcid(a) or "ORCID" in sources or reviewed) for a in authors):
+    if not any(named_author(a) and (same_orcid(a) or (not a.get("ORCID") and ("ORCID" in sources or reviewed))) for a in authors):
         return None, "authorship not sufficiently verified"
     relation = work.get("relation") or {}
     if any(relation.get(k) for k in ("is-preprint-of", "is-version-of", "is-replaced-by", "is-retraction-of", "is-correction-of")) or work.get("update-to") or work.get("updated-by"):
