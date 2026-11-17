@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "year": 2026,
+    "title": "Nanobiochar: A Next-Generation Soil Amendment for Sustainable Agriculture",
+    "authors": "Dhakal S, Gade SA, Adhikari A, Sarkar D",
+    "venue": "Smart Nanomaterials Technology, pp. 221-237",
+    "type": "Book Chapter",
+    "url": "https://doi.org/10.1007/978-981-95-9338-5_8",
+    "linkLabel": "DOI"
+  },
+  {
+    "year": 2026,
+    "title": "Farmer intentions to continuously use mobile apps for agrometeorological and agronomic advisory services: technology continuance theory model analysis on user feedback in Vietnam and Thailand",
+    "authors": "Auxtero KM, Gade SA, Kemperman M, Yaseen M, Pramanik M, Plangklang P, Hoang L, Dang LQ, Paparrizos S, Kumar U, Datta A, Himanshu SK",
+    "venue": "Asia-Pacific Journal of Regional Science, 10(3), 39",
+    "type": "Journal Article",
+    "url": "https://doi.org/10.1007/s41685-026-00441-w",
+    "linkLabel": "DOI"
+  }
+]
