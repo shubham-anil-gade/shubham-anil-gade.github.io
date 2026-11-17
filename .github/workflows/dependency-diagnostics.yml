@@ -33,9 +33,7 @@ jobs:
         run: |
           node --version
           npm --version
-          if [ ! -f package-lock.json ]; then
-            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-          fi
+          test -f package-lock.json
       - name: Record detailed npm advisories
         run: |
           status=0
