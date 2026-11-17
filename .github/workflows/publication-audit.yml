@@ -1,0 +1,31 @@
+name: Publication metadata audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit-publications.py'
+      - '.github/workflows/publication-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compare publication records
+        run: python scripts/audit-publications.py
+      - name: Save comparison report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publication-audit
+          path: publication-audit.json
+          if-no-files-found: warn
