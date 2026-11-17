@@ -19,11 +19,12 @@ def doi_key(value):
     return re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:\s*)", "", unquote(value.strip()), flags=re.I).lower()
 
 def existing():
-    page = (ROOT / "src/pages/publications.astro").read_text(encoding="utf-8")
+    manual = json.loads((ROOT / "src/data/publications.json").read_text(encoding="utf-8"))
+    synced = json.loads((ROOT / "src/data/synced-publications.json").read_text(encoding="utf-8"))
     records = []
-    for match in re.finditer(r'title:("(?:\\.|[^"\\])*").*?url:("(?:\\.|[^"\\])*")', page):
-        title, url = map(json.loads, match.groups())
-        records.append({"title": title, "doi": doi_key(url) if re.match(r"https?://(?:dx\.)?doi\.org/", url, re.I) else ""})
+    for item in manual["publications"] + manual["preprints"] + synced:
+        url = item["url"]
+        records.append({"title": item["title"], "doi": doi_key(url) if re.match(r"https?://(?:dx\\.)?doi\\.org/", url, re.I) else ""})
     if not records:
         raise RuntimeError("No existing publication records recognized; aborting.")
     return records
