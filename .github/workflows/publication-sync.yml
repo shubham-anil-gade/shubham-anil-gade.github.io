@@ -52,7 +52,7 @@ jobs:
         run: python scripts/sync-publications.py --reviewed-dois "$REVIEWED_DOIS"
       - name: Save preview report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: publication-sync-report
           path: publication-sync-report.json
@@ -86,7 +86,7 @@ jobs:
           python scripts/sync-publications.py --apply --reviewed-dois "$REVIEWED_DOIS"
       - name: Save publication report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: publication-apply-report
           path: publication-sync-report.json
